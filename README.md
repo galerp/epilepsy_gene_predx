@@ -16,15 +16,17 @@ This [wrapper](https://github.com/shiva-g/The-Cube/blob/master/wrapper.R) script
 
 ## Files: ##
 
-[hpo_is.a_tree](https://github.com/shiva-g/The-Cube/blob/master/files/hpo_is.a_tree.csv) - This file contains the ontological information and definition for every single HPO term. The 'is.a' term is the parent term for each respective HPO term.
+[hpo_def](https://github.com/galerp/Cube3/blob/main/Files/HPO_def_rl_2020-10-12_dl_2021-08-03.csv) - This file contains every HPO code along with its definition
 
-[hpo_ancestors](https://github.com/shiva-g/The-Cube/blob/master/files/hpo_ancestors.csv) -  This file contains the higher level terms of each HPO term. This is essential for calculating the MICA (most informative common ancestor) between 2 HPO terms which is one of the first steps to finding the similarity score between patients.
+[hpo_ancestors](https://github.com/galerp/Cube3/blob/main/Files/HPO_ancs_rl_2020-10-12_dl_2021-08-03.csv) -  This file contains the higher level terms of each HPO term. This is essential for propagating HPO terms (e.g., creating the binned prop file from the binned base file.
 
-[aed_encounter](https://github.com/shiva-g/The-Cube/blob/master/files/aed_encounter.csv) -  This file contains the first and last encounters for each study ID.
+[gene diagnoses](https://github.com/galerp/Cube3/blob/main/Files/example_gene_data.csv) -  This file contains the genetic diagnoses for those in the cohort as well as the age of genetic diagnosis.
 
-[diagnosis](https://github.com/shiva-g/The-Cube/blob/master/files/diagnosis.csv) -  This file has all the diagnosis for each study ID at all time points along with the HPO terms.
+[gene classes](https://github.com/galerp/Cube3/blob/main/Files/gene_classes.csv) -  This file has contains maps the genes into broader gene classes
 
-[survival](https://github.com/shiva-g/The-Cube/blob/master/files/survival.csv) -  This file containts information about the genetic diagnosis of each study ID along with gender and diagnosis category.
+[binned base](https://github.com/galerp/Cube3/blob/main/Files/example_bin_base.csv) -  This file contains the binned, base HPO terms of the cohor
+
+[binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_bin_prop.csv) -  This file contains the binned, propagated HPO terms of the cohor
 
 
 
