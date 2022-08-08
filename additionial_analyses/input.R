@@ -1,0 +1,18 @@
+# all files are requested in the exact format and column name as present in the files folder. 
+# Please provide complete path to the files.
+
+# General files
+output_dir : /Users/Desktop/phendxer/outputs/     # required
+file_path : Files/ # required
+secondary_dir : additionial_analyses/
+
+base_hpo: Files/example_bin_base.csv # required 
+prop_hpo: Files/example_bin_prop.csv # optional
+gene_dx: Files/example_gene_data.csv # required
+gene_class: Files/gene_classes.csv #required
+
+
+hpo_tree: Files/HPO_def_rl_2020-10-12_dl_2021-08-03.csv #required
+hpo_ancs: Files/HPO_ancs_rl_2020-10-12_dl_2021-08-03.csv #required if no prop_hpo
+  
+#plot: yes # required yes / no -> all plots will be saved to the plots folder
