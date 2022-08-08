@@ -1,10 +1,8 @@
 library(optparse,quietly = T)
 library(yaml,quietly = T)        
 library(Hmisc, quietly = T)
-# library(lubridate)
 library(foreach, quietly = T)
 library(doParallel, quietly = T)
-library(stringr, quietly = T)
 library(tidyverse, quietly = T)
 
 
@@ -30,16 +28,18 @@ mono_gene <- gene_dx %>%
 all_gene <- mono_gene %>% 
   mutate(Gene = "All")
 
-gene_class <- mono_gene %>% 
-  left_join(gene_class) %>% 
+gene_classes <- mono_gene %>% 
+  left_join(gene_class %>% 
+              select(Gene, Class)) %>% 
   select(-Gene) %>%
   rename(Gene = Class) %>%
-  filter(!is.na(Gene))
+  filter(!is.na(Gene)) %>% 
+  select(ID, age_genetic_dx, Gene)
 
 
 full_dx <- mono_gene %>% 
   rbind(all_gene) %>% 
-  rbind(gene_class)
+  rbind(gene_classes)
 
 
 #Get list to analyze (n>1)
@@ -58,7 +58,7 @@ hpo_sig <- matrix(nrow=0, ncol=13)
 
 s_times <- sort(unique(prop_hpo$start_year))
 e_times <- sort(unique(prop_hpo$finish_year))
-genes <- unique(gene_count$Gene)[3]
+genes <- unique(gene_count$Gene)
 hpos <- unique(prop_hpo$HPO)
 
 #Function to find features at each gene and each time bin
