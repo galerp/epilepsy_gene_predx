@@ -11,13 +11,23 @@ ncores <- detectCores(all.tests = FALSE, logical = TRUE)
 registerDoParallel(cores = ncores-1)
 
 
-
-prop_hpo <- read_csv(input.yaml$prop_hpo)
+# Load files
+prop_hpo_full <- read_csv(input.yaml$prop_hpo)
 gene_dx <- read_csv(input.yaml$gene_dx)
 gene_class <- read_csv(input.yaml$gene_class)
 
 hpo_def <- read_csv(input.yaml$hpo_tree)
 
+  
+# Remove individuals with genetic dx but no age of dx
+gene_nodx_age <- gene_dx %>%
+  select(ID, Gene,age_genetic_dx) %>%
+  filter(!is.na(Gene),!is.na(ID), Gene !="") %>%
+  filter(is.na(age_genetic_dx)) %>% 
+  unique() 
+
+prop_hpo <- prop_hpo_full %>% 
+  filter(ID %nin% gene_nodx_age$ID)
   
 
 #Compose full genetic diagnoses
@@ -36,7 +46,7 @@ gene_classes <- mono_gene %>%
   filter(!is.na(Gene)) %>% 
   select(ID, age_genetic_dx, Gene)
 
-
+#All diagnoses
 full_dx <- mono_gene %>% 
   rbind(all_gene) %>% 
   rbind(gene_classes)
@@ -45,7 +55,7 @@ full_dx <- mono_gene %>%
 #Get list to analyze (n>1)
 gene_pats<- full_dx %>%
   select(ID, Gene,age_genetic_dx) %>%
-  filter(!is.na(Gene),!is.na(ID), Gene !="") %>% #double check
+  filter(!is.na(Gene),!is.na(ID), Gene !="") %>% 
   unique()
 
 gene_count <- gene_pats %>%
@@ -80,7 +90,6 @@ hpo_fishes <- function(pats_time,yesg_hpo,nog_hpo,t_start,t_end,geno){
 
   hp_combs_sig <- foreach(i = 1:nrow(y_hpo_count), .combine=rbind) %dopar% {
     hp <- y_hpo_count$HPO[i]
-    # # print(hp)
     fish <- matrix(ncol=2,nrow=2)
     fish[is.na(fish)] <- 0
     fish[1,1] <- y_hpo_count[i,2] %>% unlist()
@@ -115,7 +124,8 @@ hpo_fishes <- function(pats_time,yesg_hpo,nog_hpo,t_start,t_end,geno){
     pval <- ftest$p.value
     CI_lower <- ftest$conf.int[1]
     CI_upper <- ftest$conf.int[2]
-    #
+    
+    # Haldane-Anscombe correction: Prevents OR of Inf
     if(any(fish==0)){
       fish = fish+0.5
     }
@@ -152,7 +162,7 @@ for(g in 1:length(genes)){
     #Already diagnosed patients
     dx_pats <- gene_pats %>%
       #CONSERVATIVE FILTER
-      filter(age_genetic_dx <= t_start)
+      filter(age_genetic_dx <= t_end)
 
     pats_time <- prop_hpo %>%
       filter(start_year == t_start) %>%
@@ -167,7 +177,6 @@ for(g in 1:length(genes)){
       filter(age_genetic_dx > (t_start+0.25) )
 
     yesg_hpo <- pats_time %>%
-      # filter(ID %in% gene_pats$ID) %>%
       filter(ID %in% undx_pats$ID)
     nog_hpo <- pats_time %>%
       filter(ID %nin% all_g_pats$ID) %>%
