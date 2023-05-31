@@ -8,10 +8,9 @@ Consequently, at each age bin we can find clinical concepts that are significant
 ## Scripts:
 
 This [wrapper](https://github.com/shiva-g/The-Cube/blob/master/wrapper.R) script needs to be submitted to run the entire pipeline.
-
-* [Helper file](https://github.com/shiva-g/The-Cube/blob/master/scripts/helper_file.R)  - loads data and cleans it. Creates base and prop hpo files. 
-* [3d Array creation](https://github.com/shiva-g/The-Cube/blob/master/scripts/3d_arrays.R) - creates the 3d matrices.
-* [Fishers test](https://github.com/shiva-g/The-Cube/blob/master/scripts/hpo_associations.R) - hpo_associations.
+* [Binned Fishers test](https://github.com/galerp/Cube3/blob/main/scripts/fisher_dx_binned.R) - finds clinical associations with genes prior to diagnosis ("note elimination") in 3 month time bins.
+* [Random Forest Models](https://github.com/galerp/Cube3/blob/main/scripts/rf_dx_model.R) - trains and tests Random Forest models to predict SCN1A, bootstrapping at every timeinterval.
+* [HPO Propagation](https://github.com/galerp/Cube3/blob/main/additionial_analyses/compose_prop.R)  - propagates a base HPO file, including all ancestors of each HPO in every time bine.
 
 
 ## Files: ##
@@ -26,8 +25,11 @@ This [wrapper](https://github.com/shiva-g/The-Cube/blob/master/wrapper.R) script
 
 [binned base](https://github.com/galerp/Cube3/blob/main/Files/example_bin_base.csv) -  This file contains the binned, base HPO terms of the cohor
 
-[binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_bin_prop.csv) -  This file contains the binned, propagated HPO terms of the cohor
+[binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_bin_prop.csv) -  This file contains the binned, propagated HPO terms of the cohort
 
+[binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_bin_prop.csv) -  This file contains the binned, propagated HPO terms of the cohort
+
+[sig_feats](https://github.com/galerp/Cube3/blob/main/Files/scn1a_1month_accord_sig_feats.csv) - This file contains a large subset of the terms significantly associated with SCN1A with moving 1 month ("accordian") time bins
 
 
 ### Requirements:
