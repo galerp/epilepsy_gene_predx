@@ -62,16 +62,10 @@ if(is.null(input.yaml$gene_class) == T){
 
 
 #Term propagation
-if(is.null(input.yaml$prop_hpo) == F ){
-  pos_ic <- read_csv(paste0(input.yaml$file_path, "example_bin_prop.csv"))
-} else{
+if(is.null(input.yaml$prop_hpo) == T ){
   message("\n  Manually propagating terms... \n ")
   source(paste0(input.yaml$secondary_dir,"compose_prop.R"))
   input.yaml$prop_hpo <- read_csv(paste0(input.yaml$file_path,"example_bin_prop.csv"))
-  if(is.null(input.yaml$pos_ic) == T){
-    message("\n  Must use default propagation file or run compose_prop.R to continue analyses... \n ")
-    break;
-  }
 }
 
 message("\n Running primary analysis...")
