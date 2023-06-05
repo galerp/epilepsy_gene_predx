@@ -4,7 +4,7 @@
 # General files
 output_dir : /Users/galerp/Desktop/     # required
 file_path : Files/ # required
-secondary_dir : additionial_analyses/
+secondary_dir : additional_analyses/
 
 base_hpo: Files/example_bin_base.csv # required 
 prop_hpo: Files/example_bin_prop.csv # optional
