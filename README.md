@@ -15,7 +15,7 @@ This [wrapper](https://github.com/shiva-g/The-Cube/blob/master/wrapper.R) script
 
 ## Files: ##
 
-[hpo_def](https://github.com/galerp/Cube3/blob/main/Files/HPO_def_rl_2020-10-12_dl_2021-08-03.csv) - This file contains every HPO code along with its definition.
+[hpo def](https://github.com/galerp/Cube3/blob/main/Files/HPO_def_rl_2020-10-12_dl_2021-08-03.csv) - This file contains every HPO code along with its definition.
 
 [hpo_ancestors](https://github.com/galerp/Cube3/blob/main/Files/HPO_ancs_rl_2020-10-12_dl_2021-08-03.csv) -  This file contains the higher level terms of each HPO term. This is essential for propagating HPO terms (e.g., creating the binned prop file from the binned base file.
 
@@ -26,8 +26,6 @@ This [wrapper](https://github.com/shiva-g/The-Cube/blob/master/wrapper.R) script
 [binned base](https://github.com/galerp/Cube3/blob/main/Files/example_bin_base.csv) -  This file contains the binned, base HPO terms of the cohort. Note, this is an example dataset based on frequencies of occurence in our cohort.
 
 [binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_bin_prop.csv) -  This file contains the binned, propagated HPO terms of the cohort. Note, this is an example dataset based on frequencies of occurence in our cohort.
-
-[binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_bin_prop.csv) -  This file contains the binned, propagated HPO terms of the cohort.
 
 [sig_feats](https://github.com/galerp/Cube3/blob/main/Files/scn1a_1month_accord_sig_feats.csv) - This file contains a large subset of the terms significantly associated with SCN1A with moving 1 month ("accordian") time bins.
 
