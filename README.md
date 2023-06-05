@@ -27,7 +27,7 @@ This [wrapper](https://github.com/shiva-g/The-Cube/blob/master/wrapper.R) script
 
 [binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_bin_prop.csv) -  This file contains the binned, propagated HPO terms of the cohort. Note, this is an example dataset based on frequencies of occurence in our cohort.
 
-[sig_feats](https://github.com/galerp/Cube3/blob/main/Files/scn1a_1month_accord_sig_feats.csv) - This file contains a large subset of the terms significantly associated with SCN1A with moving 1 month ("accordian") time bins.
+[sig feats](https://github.com/galerp/Cube3/blob/main/Files/scn1a_1month_accord_sig_feats.csv) - This file contains a large subset of the terms significantly associated with SCN1A with moving 1 month ("accordian") time bins.
 
 
 ### Requirements:
