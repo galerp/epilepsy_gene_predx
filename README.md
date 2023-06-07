@@ -7,7 +7,6 @@ Consequently, at each age bin we can find clinical concepts that are significant
 
 ## Scripts:
 
-This [wrapper](https://github.com/shiva-g/The-Cube/blob/master/wrapper.R) script needs to be submitted to run the entire pipeline.
 * [Binned Fishers test](https://github.com/galerp/Cube3/blob/main/scripts/fisher_dx_binned.R) - finds clinical associations with genes prior to diagnosis ("note elimination") in 3 month time bins.
 * [Random Forest Models](https://github.com/galerp/Cube3/blob/main/scripts/rf_dx_model.R) - trains and tests Random Forest models to predict SCN1A, bootstrapping at every age interval.
 * [HPO Propagation](https://github.com/galerp/Cube3/blob/main/additionial_analyses/compose_prop.R)  - propagates a base HPO file, including all ancestors of each HPO in every time bin.
@@ -32,7 +31,8 @@ This [wrapper](https://github.com/shiva-g/The-Cube/blob/master/wrapper.R) script
 
 ### Requirements:
   [R](https://www.r-project.org/) with the following packages:
-1. [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html)
-2. [hmisc](https://cran.r-project.org/web/packages/hmisc/index.html)
-3. [foreach](https://cran.r-project.org/web/packages/foreach/index.html)
-4. [doparallel](https://cran.r-project.org/web/packages/doparallel/index.html)
+1. [yaml](https://cran.r-project.org/web/packages/yaml/index.html)
+2. [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html)
+3. [hmisc](https://cran.r-project.org/web/packages/hmisc/index.html)
+4. [foreach](https://cran.r-project.org/web/packages/foreach/index.html)
+5. [doparallel](https://cran.r-project.org/web/packages/doparallel/index.html)
