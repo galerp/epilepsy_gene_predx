@@ -1,4 +1,3 @@
-library(yaml,quietly = T)        
 library(Hmisc, quietly = T)
 library(foreach, quietly = T)
 library(doParallel, quietly = T)
@@ -9,11 +8,11 @@ library(tidyverse, quietly = T)
 ncores <- detectCores(all.tests = FALSE, logical = TRUE)
 registerDoParallel(cores = ncores-1)
 
-
+setwd("/Users/galerp/Documents/manuscripts/cube3/git_repo/Cube3/Files/")
 # Load files
-prop_hpo_full <- read_csv(input.yaml$prop_hpo)
-gene_dx <- read_csv(input.yaml$gene_dx)
-gene_class <- read_csv(input.yaml$gene_class)
+prop_hpo_full <- read_csv("example_bin_prop.csv")
+gene_dx <- read_csv("example_gene_data.csv")
+gene_class <- read_csv("gene_classes.csv")
 
 hpo_def <- read_csv(input.yaml$hpo_tree)
 
@@ -217,7 +216,7 @@ hpo_sig3 <- hpo_sig2 %>%
   mutate(yes_npats = tot_gene_pats*yes_freq) %>%
   left_join(hpo_def)
 
-write_csv(hpo_sig3, paste0(input.yaml$output_dir,"gene_fish_3month_consv.csv"))
+write_csv(hpo_sig3, "gene_fish_3month_consv.csv")
 
 
 

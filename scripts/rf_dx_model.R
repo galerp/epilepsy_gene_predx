@@ -1,33 +1,21 @@
-library(tidyverse)
-library(Hmisc)
-library(hablar)
-library(magrittr)
-library(mltools)
-library(data.table)
-library(gbm)
-library(caTools)
-library(randomForest)
-library(caret)
-library(ggcorrplot)
-library(factoextra)
-library(FactoMineR)
-library(pROC)
-library(ROCR)
+library(tidyverse, quietly = T)
+library(Hmisc, quietly = T)
+library(randomForest, quietly = T)
+library(ROCR, quietly = T)
 
+
+setwd("/Users/galerp/Documents/manuscripts/cube3/git_repo/Cube3/Files/")
 
 #HPO helper files
-hpo_def <- read_csv(input.yaml$hpo_tree)
-hpo_isa <- read_csv(input.yaml$hpo_isa)
+hpo_def <- read_csv("HPO_def_rl_2020-10-12_dl_2021-08-03.csv")
+hpo_isa <- read_csv("HPO_isa_rl_2020-10-12_dl_2021-08-03.csv")
 
 #prop file
-prop_hpo_full <- read_csv(input.yaml$prop_hpo)
+prop_hpo_full <- read_csv("example_bin_prop.csv")
 
 
-gene_class <- read_csv(input.yaml$gene_class)
-
-
-gene_dx <- read_csv(input.yaml$gene_dx)
-gene_class <- read_csv(input.yaml$gene_class)
+gene_dx <- read_csv("example_gene_data.csv")
+gene_class <- read_csv("gene_classes.csv")
 
 
 #Remove individuals with genetic dx but no age of dx
@@ -39,6 +27,7 @@ gene_nodx_age <- gene_dx %>%
 
 #Diagnosed individuals with age of dx
 prop_hpo_dx <- prop_hpo_full %>% 
+  left_join(gene_dx) %>% 
   filter(ID %nin% gene_nodx_age$ID) %>% 
   #Ensure that removing non diagnosed individuals
   filter(!is.na(Gene), Gene !="") %>% 
@@ -80,7 +69,7 @@ full_dx <- mono_gene %>%
 
 
 #Features
-filt_accord <- read_csv(input.yaml$sig_feats) %>%
+filt_accord <- read_csv("scn1a_1month_accord_sig_feats.csv") %>%
   #The filters below was applied prior to file upload
   # filter(pval<0.05) %>% 
   # filter(yes_npats > 1) %>% 
@@ -109,7 +98,7 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
     filter(t_end<=max_age) %>% 
     dplyr::group_by(HPO, def) %>% 
     dplyr::summarize(pval = min(pval)) %>%
-    left_join(gene_accord %>% select(HPO, pval, t_start,t_end,yes_npats)) %>%
+    left_join(gene_accord %>% select(HPO, pval, t_start,t_end)) %>%
     arrange(pval)
   
   #Prune features to remove redundant terms
@@ -172,24 +161,23 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
     mutate(t_start = as.factor(round(t_start*12))) %>% 
     mutate(t_end = as.factor(round(t_end*12))) %>% 
     mutate(HPO = as.factor(HPO)) %>% 
-    select(-def)%>% 
     dplyr::left_join(encod_helper %>% mutate(top_feats = "Yes") %>% 
                        mutate(t_start = as.factor(round(t_start*12))) %>% 
                        mutate(t_end = as.factor(round(t_end*12))) %>% 
                        mutate(HPO = as.factor(HPO))) %>% 
     filter(top_feats == "Yes") %>% 
-    left_join(gene_top20 %>% mutate(feat = paste(HPO,t_start,t_end,sep="_")) %>% 
+    left_join(gene_top_terms %>% mutate(feat = paste(HPO,t_start,t_end,sep="_")) %>% 
                 select(HPO, def, feat))
   
   
   gene_long_sub <- gene_long_y %>% 
-    select(pat_id, feat) %>% 
+    select(ID, feat) %>% 
     mutate(feat = as.factor(feat)) %>% 
     distinct()
   
   #Generate feature that is a sum of all features
   gene_feat_sum <- gene_long_sub %>%
-    count(pat_id) %>%
+    count(ID) %>%
     rename(total_feats = n)
   
   gene_long_sub_tb <- as.data.table(gene_long_sub)
@@ -224,7 +212,7 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
                        mutate(t_end = as.factor(round(t_end*12))) %>% 
                        mutate(HPO = as.factor(HPO))) %>% 
     filter(top_feats == "Yes") %>% 
-    left_join(gene_top20 %>% mutate(feat = paste(HPO,t_start,t_end,sep="_")) %>% 
+    left_join(gene_top_terms %>% mutate(feat = paste(HPO,t_start,t_end,sep="_")) %>% 
                 select(HPO, def, feat))
   
 
@@ -405,7 +393,7 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
 #
 
 #Ages to test
-start_age = 2/12 + 0.001
+start_age = 1 + 0.001
 end_age = 5.084
 
 tst_ages <- seq((start_age + 1/12), 5.084, 1/12)

@@ -31,8 +31,7 @@ Consequently, at each age bin we can find clinical concepts that are significant
 
 ### Requirements:
   [R](https://www.r-project.org/) with the following packages:
-1. [yaml](https://cran.r-project.org/web/packages/yaml/index.html)
-2. [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html)
-3. [hmisc](https://cran.r-project.org/web/packages/hmisc/index.html)
-4. [foreach](https://cran.r-project.org/web/packages/foreach/index.html)
-5. [doparallel](https://cran.r-project.org/web/packages/doparallel/index.html)
+1. [tidyverse](https://cran.r-project.org/web/packages/tidyverse/index.html)
+2. [hmisc](https://cran.r-project.org/web/packages/hmisc/index.html)
+3. [foreach](https://cran.r-project.org/web/packages/foreach/index.html)
+4. [doparallel](https://cran.r-project.org/web/packages/doparallel/index.html)
