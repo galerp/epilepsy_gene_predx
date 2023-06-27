@@ -6,15 +6,20 @@ library(tidyverse, quietly = T)
 
 # Set cores available to perform parallelization
 ncores <- detectCores(all.tests = FALSE, logical = TRUE)
+# Caution: Recommended that you do not use all cores
 registerDoParallel(cores = ncores-1)
 
 setwd("/Users/galerp/Documents/manuscripts/cube3/git_repo/Cube3/Files/")
+
+#Set output directory
+output_dir = "/Users/galerp/Desktop/"
+
 # Load files
 prop_hpo_full <- read_csv("example_bin_prop.csv")
 gene_dx <- read_csv("example_gene_data.csv")
 gene_class <- read_csv("gene_classes.csv")
 
-hpo_def <- read_csv(input.yaml$hpo_tree)
+hpo_def <- read_csv("HPO_def_rl_2020-10-12_dl_2021-08-03.csv")
 
   
 # Remove individuals with genetic dx but no age of dx
@@ -216,7 +221,7 @@ hpo_sig3 <- hpo_sig2 %>%
   mutate(yes_npats = tot_gene_pats*yes_freq) %>%
   left_join(hpo_def)
 
-write_csv(hpo_sig3, "gene_fish_3month_consv.csv")
+write_csv(hpo_sig3, paste0(output_dir,"gene_fish_3month_consv.csv"))
 
 
 
