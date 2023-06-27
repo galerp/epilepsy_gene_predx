@@ -1,11 +1,5 @@
 library(tidyverse, quietly = T)
 
-
-
-
-
-
-
 pat_prop <- function(pat_base){
   pat_table_prop <- pat_base %>% 
     left_join(hpo_ancs %>% dplyr::select(-definition)) %>% 
