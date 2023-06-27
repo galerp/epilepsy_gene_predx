@@ -9,7 +9,7 @@ Consequently, at each age bin we can find clinical concepts that are significant
 
 * [Binned Fishers test](https://github.com/galerp/Cube3/blob/main/scripts/fisher_dx_binned.R) - finds clinical associations with genes prior to diagnosis ("note elimination") in 3 month time bins.
 * [Random Forest Models](https://github.com/galerp/Cube3/blob/main/scripts/rf_dx_model.R) - trains and tests Random Forest models to predict SCN1A, bootstrapping at every age interval.
-* [HPO Propagation](https://github.com/galerp/Cube3/blob/main/additionial_analyses/compose_prop.R)  - propagates a base HPO file, including all ancestors of each HPO in every time bin.
+* [HPO Propagation](https://github.com/galerp/Cube3/blob/main/additional_analyses/compose_prop.R)  - propagates a base HPO file, including all ancestors of each HPO in every time bin.
 
 
 ## Files: ##
