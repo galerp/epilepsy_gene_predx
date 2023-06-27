@@ -6,12 +6,15 @@ library(ROCR, quietly = T)
 
 setwd("/Users/galerp/Documents/manuscripts/cube3/git_repo/Cube3/Files/")
 
+#Set output directory
+output_dir = "/Users/galerp/Desktop/"
+
 #HPO helper files
 hpo_def <- read_csv("HPO_def_rl_2020-10-12_dl_2021-08-03.csv")
 hpo_isa <- read_csv("HPO_isa_rl_2020-10-12_dl_2021-08-03.csv")
 
 #prop file
-prop_hpo_full <- read_csv("example_bin_prop.csv")
+prop_hpo_full <- read_csv("example_1month_bin_prop.csv")
 
 
 gene_dx <- read_csv("example_gene_data.csv")
@@ -34,7 +37,7 @@ prop_hpo_dx <- prop_hpo_full %>%
   #Subtract small number to prevent possible hidden floats 
   mutate(age_genetic_dx = age_genetic_dx-0.00001) %>% 
   #Remove terms after diagnosis
-  filter(finish_year<age_genetic_dx)
+  filter(t_end<age_genetic_dx)
 
 #Non-diagnosed individuals
 prop_hpo_nodx <- prop_hpo_dx %>% 
@@ -87,7 +90,7 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
     filter(ID %in% geno_pat$ID)
   
   control_prop_y <- prop_hpo %>% 
-    filter(ID %nin% prop_hpo$ID)
+    filter(ID %nin% gene_prop_y$ID)
   
   #Features with filter for genetic dx
   gene_accord <- filt_accord %>% 
@@ -157,7 +160,6 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
   
   #Gene Features One Hot Encoding
   gene_long_y <- gene_prop_y %>% 
-    rename(t_start = start_year, t_end = finish_year) %>% 
     mutate(t_start = as.factor(round(t_start*12))) %>% 
     mutate(t_end = as.factor(round(t_end*12))) %>% 
     mutate(HPO = as.factor(HPO)) %>% 
@@ -182,16 +184,16 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
   
   gene_long_sub_tb <- as.data.table(gene_long_sub)
   
-  gene_wide <- dcast(gene_long_sub_tb[, list(V1=1, pat_id, feat)], 
-                     pat_id ~ feat, fun=sum, value.var="V1", 
+  gene_wide <- dcast(gene_long_sub_tb[, list(V1=1, ID, feat)], 
+                     ID ~ feat, fun=sum, value.var="V1", 
                      drop=c(TRUE, FALSE))#%>% 
   
   #Take into account individuals with no features
-  pat_miss <- gene_prop_y$pat_id[gene_prop_y$pat_id %nin% gene_long_y$pat_id] %>% unique
+  pat_miss <- gene_prop_y$ID[gene_prop_y$ID %nin% gene_long_y$ID] %>% unique
   
   fill_miss <- as.data.frame(matrix(nrow=length(pat_miss), ncol = length(gene_wide)))
   names(fill_miss) <- names(gene_wide)
-  fill_miss$pat_id <- pat_miss
+  fill_miss$ID <- pat_miss
   fill_miss[is.na(fill_miss)] <- 0
   gene_wide <- gene_wide %>% rbind(fill_miss) %>% 
     left_join(gene_feat_sum)
@@ -201,47 +203,45 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
   # CONTROLS One-Hot Encode
   ################
   
-  control_long <- control_prop_y %>% 
-    rename(t_start = start_year, t_end = finish_year) %>% 
+  control_long2 <- control_prop_y %>% 
     mutate(t_start = as.factor(round(t_start*12))) %>% 
     mutate(t_end = as.factor(round(t_end*12))) %>% 
     mutate(HPO = as.factor(HPO)) %>% 
-    select(-def) %>% 
     dplyr::left_join(encod_helper %>% mutate(top_feats = "Yes") %>% 
                        mutate(t_start = as.factor(round(t_start*12))) %>% 
                        mutate(t_end = as.factor(round(t_end*12))) %>% 
                        mutate(HPO = as.factor(HPO))) %>% 
     filter(top_feats == "Yes") %>% 
     left_join(gene_top_terms %>% mutate(feat = paste(HPO,t_start,t_end,sep="_")) %>% 
-                select(HPO, def, feat))
+                select(HPO, feat))
   
 
     control_long_sub <- control_long %>% 
-    select(pat_id, feat) %>% 
-    mutate(feat = as.factor(feat)) %>% 
-    distinct()
+      select(ID, feat) %>% 
+      mutate(feat = as.factor(feat)) %>% 
+      distinct()
     
   #Generate feature that is a sum of all features
   control_feat_sum <- control_long_sub %>%
-    count(pat_id) %>%
+    count(ID) %>%
     rename(total_feats = n)
   
   
   control_long_sub_tb <- as.data.table(control_long_sub)
   
-  control_wide <- dcast(control_long_sub_tb[, list(V1=1, pat_id, feat)], 
-                        pat_id ~ feat, fun=sum, value.var="V1", 
+  control_wide <- dcast(control_long_sub_tb[, list(V1=1, ID, feat)], 
+                        ID ~ feat, fun=sum, value.var="V1", 
                         drop=c(TRUE, FALSE))%>% 
     left_join(control_feat_sum)
   
   #Take into account individuals with no features
-  pat_miss <- control_prop_y$pat_id[control_prop_y$pat_id %nin% control_long$pat_id] %>% unique
+  pat_miss <- control_prop_y$ID[control_prop_y$ID %nin% control_long$ID] %>% unique
   
   fill_miss <- as.data.frame(matrix(nrow=length(pat_miss), ncol = length(gene_wide)))
   names(fill_miss) <- names(gene_wide)
-  fill_miss$pat_id <- pat_miss
+  fill_miss$ID <- pat_miss
   fill_miss[is.na(fill_miss)] <- 0
-  control_wide <- control_wide %>% rbind(fill_miss)
+  control_wide <- control_wide %>% rbind(fill_miss, fill = TRUE)
   
   ### Combine ALL DATA ####
   tot_wide <- control_wide %>% mutate(gene = 0) %>% 
@@ -253,12 +253,12 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
   # Random Pulls
   ####################
   
-  control_pats <- control_wide$pat_id %>% unique
-  gene_pats <- gene_wide$pat_id %>% unique
+  control_pats <- control_wide$ID %>% unique
+  gene_pats <- gene_wide$ID %>% unique
   n_gene <- length(unique(gene_pats))
   
-  #Make sure this is True
-  # n_gene == length(unique(gene_wide$pat_id))
+  #This should return True
+  # n_gene == length(unique(gene_wide$ID))
   
   test_perc <- 0.3
   ntot <- round(n_gene/0.4) #data imbalance 60/40
@@ -285,7 +285,7 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
   #OUTPUT MATRIX
   # Note: it is a matrix for efficiency
   cnames_1 = c("rf_Accuracy","rf_Precision","rf_Recall","rf_AUC","rf_F1","rf_NPV")
-  # If you want feature importance, uncomment
+  # If you want feature importance, uncomment:
   # feat_cnames = paste0("feat_",seq(1,tot_feats+1,1))
   # cnames_all <- c(cnames_1, feat_cnames)
   
@@ -308,17 +308,17 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
     train_pats <- c(gene_train, control_train)
     test_pats <- c(gene_test, control_test)
     
-    train_set <- tot_wide %>% filter(pat_id %in% train_pats) %>% distinct()
+    train_set <- tot_wide %>% filter(ID %in% train_pats) %>% distinct()
     
-    test_set <- tot_wide %>% filter(pat_id %in% test_pats) %>% distinct()
+    test_set <- tot_wide %>% filter(ID %in% test_pats) %>% distinct()
     
     y_train <- (train_set$gene %>% as.numeric) - 1
     y_test <- (test_set$gene %>% as.numeric) - 1
     
     X_train <- train_set %>% 
-      select(-gene, -pat_id)
+      select(-gene, -ID)
     X_test <- test_set %>% 
-      select(-gene,-pat_id)
+      select(-gene,-ID)
     
     ###############
     # TEST Model RandomForest
@@ -396,7 +396,7 @@ rf_run <- function(filt_accord, prop_hpo, genotype, max_age, n_feats){
 start_age = 1 + 0.001
 end_age = 5.084
 
-tst_ages <- seq((start_age + 1/12), 5.084, 1/12)
+tst_ages <- seq((start_age + 1/12), end_age, 1/12)
 tst_ages = tst_ages + 0.001 #Prevents potential issues with hidden floats
 
 #Gene to test
@@ -408,18 +408,16 @@ feat_seq = c(5,10,15,20)
 for (n_feats in feat_seq){
   print(n_feats)
 
-  rf_it_tot <- rf_run(filt_accord, genotype, start_age,n_feats)
+  rf_it_tot <- rf_run(filt_accord, prop_hpo, genotype, start_age,n_feats)
   
   for(max_age in tst_ages){
     print(max_age)
-    rf_it_cur <- rf_run(filt_accord, genotype, max_age,n_feats)
+    rf_it_cur <- rf_run(filt_accord, prop_hpo, genotype, max_age,n_feats)
     rf_it_tot <- bind_rows(rf_it_tot, rf_it_cur)
   }
   
   
-  output_file = paste0(input.yaml$output_dir, genotype, "_rf_model_",
+  output_file = paste0(output_dir, genotype, "_rf_model_",
                        n_feats,"feat.csv")
   write_csv(rf_it_tot, output_file)
 }
-
-
