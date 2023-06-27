@@ -18,6 +18,8 @@ Consequently, at each age bin we can find clinical concepts that are significant
 
 [hpo_ancestors](https://github.com/galerp/Cube3/blob/main/Files/HPO_ancs_rl_2020-10-12_dl_2021-08-03.csv) -  This file contains the higher level terms of each HPO term. This is essential for propagating HPO terms (e.g., creating the binned prop file from the binned base file.
 
+[hpo is.a](https://github.com/galerp/Cube3/blob/main/Files/HPO_isa_rl_2020-10-12_dl_2021-08-03.csv) - This file contains every HPO code along with its parent term. It provides a basis for the directed acyclic graph structure of the HPO of the HPO.
+
 [gene diagnoses](https://github.com/galerp/Cube3/blob/main/Files/example_gene_data.csv) -  This file contains the genetic diagnoses for those in the cohort as well as the age of genetic diagnosis. Note, this is an example dataset created based on randomly altered data in our cohort.
 
 [gene classes](https://github.com/galerp/Cube3/blob/main/Files/gene_classes.csv) -  This file has contains maps the genes into broader gene classes.
@@ -25,6 +27,8 @@ Consequently, at each age bin we can find clinical concepts that are significant
 [binned base](https://github.com/galerp/Cube3/blob/main/Files/example_bin_base.csv) -  This file contains the binned, base HPO terms of the cohort. Note, this is an example dataset based on frequencies of occurence in our cohort.
 
 [binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_bin_prop.csv) -  This file contains the binned, propagated HPO terms of the cohort. Note, this is an example dataset based on frequencies of occurence in our cohort.
+
+[1-month binned prop](https://github.com/galerp/Cube3/blob/main/Files/example_1month_bin_prop.csv) - This file contains a small example dataset of 1-month binned, propagated HPO terms. This file is for training and testing random forest models. Note, this data is intended as an example to demonstrate how to properly run these scripts. A more robust dataset is needed to obtain good results.
 
 [sig feats](https://github.com/galerp/Cube3/blob/main/Files/scn1a_1month_accord_sig_feats.csv) - This file contains a large subset of the terms significantly associated with SCN1A with moving 1 month ("accordian") time bins.
 
