@@ -1,20 +1,22 @@
 library(tidyverse, quietly = T)
 
 
-start <- Sys.time()
-message(" \n Begin propagation... \n ")
+setwd("/Users/galerp/Documents/manuscripts/cube3/git_repo/Cube3/Files/")
 
-hpo_ancs <- read_csv(input.yaml$hpo_ancestor)
-base_hpo <- read_csv(input.yaml$base_hpo)
+#Set output directory
+output_dir = "/Users/galerp/Desktop/"
+
+hpo_ancs <- read_csv("HPO_ancs_rl_2020-10-12_dl_2021-08-03.csv")
+base_hpo <- read_csv("example_bin_base.csv")
 
 
 prop_hpo<- base_hpo %>% 
     left_join(hpo_ancs) %>% 
-    dplyr::select(ID, start_year, finish_year, ancs) %>% 
-    dplyr::rename(HPO = ancs) %>% 
+    select(ID, start_year, finish_year, ancs) %>% 
+    rename(HPO = ancs) %>% 
     separate_rows(HPO, sep = ";") %>% 
     #Remove duplicated HPO terms in each patient
     distinct()
 
 
-write_csv(tot_base, paste0(input.yaml$file_path,"example_bin_prop.csv"))
+write_csv(prop_hpo, paste0(output_dir,"example_bin_prop.csv"))
