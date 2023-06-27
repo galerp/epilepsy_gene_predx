@@ -35,3 +35,5 @@ Consequently, at each age bin we can find clinical concepts that are significant
 2. [hmisc](https://cran.r-project.org/web/packages/hmisc/index.html)
 3. [foreach](https://cran.r-project.org/web/packages/foreach/index.html)
 4. [doparallel](https://cran.r-project.org/web/packages/doparallel/index.html)
+5. [randomForest](https://cran.r-project.org/web/packages/randomForest/index.html)
+6. [ROCR](https://cran.rstudio.com/web/packages/ROCR/vignettes/ROCR.html)
